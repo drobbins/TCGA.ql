@@ -27,9 +27,12 @@
 
   Query.prototype.BACKMATTER = "\n}";
 
-  Query.prototype.apes = function (opts, values) {
+  Query.prototype.constrain = function (opts, values) {
 
     var property, variable;
+
+    property = opts.property;
+    variable = opts.variable;
 
     if (typeof values === "string") {
         values = [values];
@@ -37,8 +40,8 @@
 
     var queryPart, graphPatterns = [], groupOrUnionGraphPattern;
 
-    values.forEach(function (disease) {
-        graphPatterns.push(" {\n   ?f tcga:diseaseStudy ?ds .\n   ?ds rdfs:label \"" + disease + "\" .\n }");
+    values.forEach(function (value) {
+        graphPatterns.push(" {\n   ?f tcga:"+property+" ?"+variable+" .\n   ?"+variable+" rdfs:label \"" + value + "\" .\n }");
     });
 
     if (graphPatterns.length > 1) {
@@ -47,229 +50,63 @@
         groupOrUnionGraphPattern = graphPatterns[0];
     }
 
-    queryPart = this.queryPartHandles.diseases || {};
+    queryPart = this.queryPartHandles[property] || {};
     if (!queryPart.string) {
       this.queryParts.push(queryPart);
-      this.queryPartHandles.diseases = queryPart;
+      this.queryPartHandles[property] = queryPart;
     }
     queryPart.string = groupOrUnionGraphPattern;
+
+    return this;
 
   };
 
   Query.prototype.diseases = function (diseaseNames) {
-
     if (!diseaseNames) {
-
         //TODO Query and return list of diseases
-
     } else {
-
-        if (typeof diseaseNames === "string") {
-            diseaseNames = [diseaseNames];
-        }
-
-        var diseaseQueryPart, graphPatterns = [], groupOrUnionGraphPattern;
-
-        diseaseNames.forEach(function (disease) {
-            graphPatterns.push(" {\n   ?f tcga:diseaseStudy ?ds .\n   ?ds rdfs:label \"" + disease + "\" .\n }");
-        });
-
-        if (graphPatterns.length > 1) {
-            groupOrUnionGraphPattern = graphPatterns.join("\n UNION\n");
-        } else {
-            groupOrUnionGraphPattern = graphPatterns[0];
-        }
-
-        diseaseQueryPart = this.queryPartHandles.diseases || {};
-        if (!diseaseQueryPart.string) {
-          this.queryParts.push(diseaseQueryPart);
-          this.queryPartHandles.diseases = diseaseQueryPart;
-        }
-        diseaseQueryPart.string = groupOrUnionGraphPattern;
+      return this.constrain({ property:"diseaseStudy", variable:"ds" }, diseaseNames);
     }
-
-    return this;
-
   };
 
   Query.prototype.platforms = function (platformNames) {
-
     if (!platformNames) {
-
-        //TODO Query and return list of platforms
-
+      //TODO Query and return list of platforms
     } else {
-
-        if (typeof platformNames === "string") {
-            platformNames = [platformNames];
-        }
-
-        var platformQueryPart, graphPatterns = [], groupOrUnionGraphPattern;
-
-        platformNames.forEach(function (platform) {
-            graphPatterns.push(" {\n   ?f tcga:platform ?p .\n   ?p rdfs:label \"" + platform + "\" .\n }");
-        });
-
-        if (graphPatterns.length > 1) {
-            groupOrUnionGraphPattern = graphPatterns.join("\n UNION\n");
-        } else {
-            groupOrUnionGraphPattern = graphPatterns[0];
-        }
-
-        platformQueryPart = this.queryPartHandles.platforms || {};
-        if (!platformQueryPart.string) {
-          this.queryParts.push(platformQueryPart);
-          this.queryPartHandles.platforms = platformQueryPart;
-        }
-        platformQueryPart.string = groupOrUnionGraphPattern;
+      return this.constrain({ property:"platform", variable:"p" }, platformNames);
     }
-
-    return this;
-
-  };
-
-  Query.prototype.dataTypes = function (dataTypeNames) {
-
-    if (!dataTypeNames) {
-
-        //TODO Query and return list of dataTypes
-
-    } else {
-
-        if (typeof dataTypeNames === "string") {
-            dataTypeNames = [dataTypeNames];
-        }
-
-        var dataTypeQueryPart, graphPatterns = [], groupOrUnionGraphPattern;
-
-        dataTypeNames.forEach(function (dataType) {
-            graphPatterns.push(" {\n   ?f tcga:dataType ?dt .\n   ?dt rdfs:label \"" + dataType + "\" .\n }");
-        });
-
-        if (graphPatterns.length > 1) {
-            groupOrUnionGraphPattern = graphPatterns.join("\n UNION\n");
-        } else {
-            groupOrUnionGraphPattern = graphPatterns[0];
-        }
-
-        dataTypeQueryPart = this.queryPartHandles.dataTypes || {};
-        if (!dataTypeQueryPart.string) {
-          this.queryParts.push(dataTypeQueryPart);
-          this.queryPartHandles.dataTypes = dataTypeQueryPart;
-        }
-        dataTypeQueryPart.string = groupOrUnionGraphPattern;
-    }
-
-    return this;
-
-  };
-
-  Query.prototype.archives = function (archiveNames) {
-
-    if (!archiveNames) {
-
-        //TODO Query and return list of archives
-
-    } else {
-
-        if (typeof archiveNames === "string") {
-            archiveNames = [archiveNames];
-        }
-
-        var archiveQueryPart, graphPatterns = [], groupOrUnionGraphPattern;
-
-        archiveNames.forEach(function (archive) {
-            graphPatterns.push(" {\n   ?f tcga:archive ?a .\n   ?a rdfs:label \"" + archive + "\" .\n }");
-        });
-
-        if (graphPatterns.length > 1) {
-            groupOrUnionGraphPattern = graphPatterns.join("\n UNION\n");
-        } else {
-            groupOrUnionGraphPattern = graphPatterns[0];
-        }
-
-        archiveQueryPart = this.queryPartHandles.archives || {};
-        if (!archiveQueryPart.string) {
-          this.queryParts.push(archiveQueryPart);
-          this.queryPartHandles.archives = archiveQueryPart;
-        }
-        archiveQueryPart.string = groupOrUnionGraphPattern;
-    }
-
-    return this;
-
-  };
-
-  Query.prototype.centers = function (centerNames) {
-
-    if (!centerNames) {
-
-        //TODO Query and return list of centers
-
-    } else {
-
-        if (typeof centerNames === "string") {
-            centerNames = [centerNames];
-        }
-
-        var centerQueryPart, graphPatterns = [], groupOrUnionGraphPattern;
-
-        centerNames.forEach(function (center) {
-            graphPatterns.push(" {\n   ?f tcga:centerDomain ?cd .\n   ?cd rdfs:label \"" + center + "\" .\n }");
-        });
-
-        if (graphPatterns.length > 1) {
-            groupOrUnionGraphPattern = graphPatterns.join("\n UNION\n");
-        } else {
-            groupOrUnionGraphPattern = graphPatterns[0];
-        }
-
-        centerQueryPart = this.queryPartHandles.centers || {};
-        if (!centerQueryPart.string) {
-          this.queryParts.push(centerQueryPart);
-          this.queryPartHandles.centers = centerQueryPart;
-        }
-        centerQueryPart.string = groupOrUnionGraphPattern;
-    }
-
-    return this;
-
   };
 
   Query.prototype.centerTypes = function (centerTypeNames) {
-
     if (!centerTypeNames) {
-
-        //TODO Query and return list of centerTypes
-
+      //TODO Query and return list of centerTypes
     } else {
-
-        if (typeof centerTypeNames === "string") {
-            centerTypeNames = [centerTypeNames];
-        }
-
-        var centerTypeQueryPart, graphPatterns = [], groupOrUnionGraphPattern;
-
-        centerTypeNames.forEach(function (centerType) {
-            graphPatterns.push(" {\n   ?f tcga:centerType ?ct .\n   ?ct rdfs:label \"" + centerType + "\" .\n }");
-        });
-
-        if (graphPatterns.length > 1) {
-            groupOrUnionGraphPattern = graphPatterns.join("\n UNION\n");
-        } else {
-            groupOrUnionGraphPattern = graphPatterns[0];
-        }
-
-        centerTypeQueryPart = this.queryPartHandles.centerTypes || {};
-        if (!centerTypeQueryPart.string) {
-          this.queryParts.push(centerTypeQueryPart);
-          this.queryPartHandles.centerTypes = centerTypeQueryPart;
-        }
-        centerTypeQueryPart.string = groupOrUnionGraphPattern;
+      return this.constrain({ property:"centerType", variable:"ct" }, centerTypeNames);
     }
+  };
 
-    return this;
+  Query.prototype.centers = function (centerNames) {
+    if (!centerNames) {
+      //TODO Query and return list of centers
+    } else {
+      return this.constrain({ property:"center", variable:"c" }, centerNames);
+    }
+  };
 
+  Query.prototype.dataTypes = function (dataTypeNames) {
+    if (!dataTypeNames) {
+      //TODO Query and return list of dataTypes
+    } else {
+      return this.constrain({ property:"dataType", variable:"dt" }, dataTypeNames);
+    }
+  };
+
+  Query.prototype.archives = function (archiveNames) {
+    if (!archiveNames) {
+      //TODO Query and return list of archives
+    } else {
+      return this.constrain({ property:"archive", variable:"a" }, archiveNames);
+    }
   };
 
   Query.prototype.printQuery = function () {
