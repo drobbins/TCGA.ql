@@ -25,7 +25,7 @@
                                 , "select ?file ?url where { "
                                 ].join("\n");
 
-  Query.prototype.BACKMATTER = "\n}";
+  Query.prototype.BACKMATTER = "\n} limit 100";
 
   Query.prototype.constrain = function (opts, values) {
 
