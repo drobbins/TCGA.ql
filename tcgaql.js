@@ -109,14 +109,18 @@
     }
   };
 
-  Query.prototype.printQuery = function () {
-    var queryString = this.FRONTMATTER;
-    this.queryParts.forEach( function (queryPart) {
-        queryString += "\n{\n" + queryPart.string + "\n}";
-    });
-    queryString += this.BACKMATTER;
-    console.log(queryString);
+  Query.prototype.printQuery = function printQuery () {
+    console.log(this.queryString());
     return this;
+  };
+
+  Query.prototype.queryString = function queryString () {
+    var query = this.FRONTMATTER;
+    this.queryParts.forEach( function (queryPart) {
+        query += "\n{\n" + queryPart.string + "\n}";
+    });
+    query += this.BACKMATTER;
+    return query;
   };
 
   tcgaql = function () {
