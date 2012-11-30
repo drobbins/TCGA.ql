@@ -27,7 +27,7 @@
 
   Query.prototype.BACKMATTER = "\n} limit 100";
 
-  Query.prototype.constrain = function (opts, values) {
+  Query.prototype.constrain = function constrain (opts, values) {
 
     var property, variable;
 
@@ -61,7 +61,7 @@
 
   };
 
-  Query.prototype.diseases = function (diseaseNames) {
+  Query.prototype.diseases = function diseases (diseaseNames) {
     if (!diseaseNames) {
         //TODO Query and return list of diseases
     } else {
@@ -69,7 +69,7 @@
     }
   };
 
-  Query.prototype.platforms = function (platformNames) {
+  Query.prototype.platforms = function platforms (platformNames) {
     if (!platformNames) {
       //TODO Query and return list of platforms
     } else {
@@ -77,7 +77,7 @@
     }
   };
 
-  Query.prototype.centerTypes = function (centerTypeNames) {
+  Query.prototype.centerTypes = function centerTypes (centerTypeNames) {
     if (!centerTypeNames) {
       //TODO Query and return list of centerTypes
     } else {
@@ -85,7 +85,7 @@
     }
   };
 
-  Query.prototype.centers = function (centerNames) {
+  Query.prototype.centers = function  centers (centerNames) {
     if (!centerNames) {
       //TODO Query and return list of centers
     } else {
@@ -93,7 +93,7 @@
     }
   };
 
-  Query.prototype.dataTypes = function (dataTypeNames) {
+  Query.prototype.dataTypes = function dataTypes (dataTypeNames) {
     if (!dataTypeNames) {
       //TODO Query and return list of dataTypes
     } else {
@@ -101,7 +101,7 @@
     }
   };
 
-  Query.prototype.archives = function (archiveNames) {
+  Query.prototype.archives = function archives (archiveNames) {
     if (!archiveNames) {
       //TODO Query and return list of archives
     } else {
