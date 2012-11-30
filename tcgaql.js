@@ -120,6 +120,20 @@
   };
 
   tcgaql = function () {
+  Query.prototype.run = function run () {
+    var deferred, result = {};
+    deferred = $.Deferred();
+    result.__proto__ = deferred.promise();
+    TCGA.find(this.queryString(), function (err, resp) {
+      if (err) deferred.reject(resp);
+      else {
+        $.extend(result, resp);
+        deferred.resolve(resp);
+      }
+    });
+    return result;
+  };
+
     return new Query();
   };
 
