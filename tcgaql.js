@@ -3,7 +3,7 @@
   /*jshint globalstrict:true browser:true devel:true jquery:true laxcomma:true*/
   /*globals TCGA:true*/
 
-  var tcgaql, Query;
+  var ql, Query;
 
   Query = function () {
 
@@ -123,7 +123,6 @@
     return query;
   };
 
-  tcgaql = function () {
   Query.prototype.run = function run () {
     var deferred, result = {};
     deferred = $.Deferred();
@@ -138,11 +137,14 @@
     return result;
   };
 
+  ql = function () {
     return new Query();
   };
 
-  tcgaql.Query = Query;
+  ql.Query = Query;
 
-  TCGA.ql = tcgaql;
+  TCGA.qlObj = ql;
+
+  TCGA.__defineGetter__("ql", ql);
 
 })();
