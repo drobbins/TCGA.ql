@@ -1,6 +1,6 @@
 (function () {
   "use strict";
-  /*jshint globalstrict:true browser:true devel:true jquery:true laxcomma:true*/
+  /*jshint globalstrict:true browser:true devel:true jquery:true laxcomma:true proto:true*/
   /*globals TCGA:true*/
 
   var ql, Query;
