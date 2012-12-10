@@ -108,6 +108,11 @@
     } else {
       return this.constrain({ property:"archive", variable:"a" }, archiveNames);
     }
+
+  Query.prototype.limit = function  limit (newLimit) {
+    if (!newLimit) return parseInt(this.BACKMATTER.slice(9),10);
+    this.BACKMATTER = "\n} limit " + newLimit;
+    return this;
   };
 
   Query.prototype.printQuery = function printQuery () {
