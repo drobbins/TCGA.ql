@@ -35,19 +35,19 @@
     variable = opts.variable;
 
     if (typeof values === "string") {
-        values = [values];
+      values = [values];
     }
 
     var queryPart, graphPatterns = [], groupOrUnionGraphPattern;
 
     values.forEach(function (value) {
-        graphPatterns.push(" {\n   ?f tcga:"+property+" ?"+variable+" .\n   ?"+variable+" rdfs:label \"" + value + "\" .\n }");
+      graphPatterns.push(" {\n   ?f tcga:"+property+" ?"+variable+" .\n   ?"+variable+" rdfs:label \"" + value + "\" .\n }");
     });
 
     if (graphPatterns.length > 1) {
-        groupOrUnionGraphPattern = graphPatterns.join("\n UNION\n");
+      groupOrUnionGraphPattern = graphPatterns.join("\n UNION\n");
     } else {
-        groupOrUnionGraphPattern = graphPatterns[0];
+      groupOrUnionGraphPattern = graphPatterns[0];
     }
 
     queryPart = this.queryPartHandles[property] || {};
@@ -63,7 +63,7 @@
 
   Query.prototype.diseases = function diseases (diseaseNames) {
     if (!diseaseNames) {
-        //TODO Query and return list of diseases
+      //TODO Query and return list of diseases
     } else {
       return this.constrain({ property:"diseaseStudy", variable:"ds" }, diseaseNames);
     }
@@ -117,7 +117,7 @@
   Query.prototype.queryString = function queryString () {
     var query = this.FRONTMATTER;
     this.queryParts.forEach( function (queryPart) {
-        query += "\n{\n" + queryPart.string + "\n}";
+      query += "\n{\n" + queryPart.string + "\n}";
     });
     query += this.BACKMATTER;
     return query;
@@ -126,11 +126,11 @@
   Query.prototype.run = function run () {
     var deferred, result = {};
     deferred = $.Deferred();
-    result.__proto__ = deferred.promise();
+    result.__proto__ = deferred.promise(); // The returned object has a promise as it's prototype.
     TCGA.find(this.queryString(), function (err, resp) {
       if (err) deferred.reject(resp);
       else {
-        $.extend(result, resp);
+        $.extend(result, resp); // Extend the returned object with the response from the server.
         deferred.resolve(resp);
       }
     });
