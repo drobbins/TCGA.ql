@@ -3,7 +3,26 @@
   /*jshint globalstrict:true browser:true devel:true jquery:true laxcomma:true proto:true*/
   /*globals TCGA:true*/
 
-  var ql, Query;
+  var ql, makeFilter, Query, Properties;
+
+  makeFilter = function makeFilter (property) {
+    return function (values) {
+      if (!values) {
+        return this.list(property);
+      } else {
+        return this.constrain(property, values);
+      }
+    };
+  };
+
+  Properties = {
+    diseaseStudy : { property:"diseaseStudy", variable:"ds" },
+    centerType : { property:"centerType", variable:"ct" },
+    centerDomain : { property:"centerDomain", variable:"c"},
+    platform : { property:"platform", variable:"p"},
+    dataType : { property:"dataType", variable:"dt"},
+    archive : { property:"archive", variable:"a"}
+  };
 
   Query = function () {
 
@@ -59,55 +78,19 @@
     queryPart.string = groupOrUnionGraphPattern;
 
     return this;
-
   };
 
-  Query.prototype.diseases = function diseases (diseaseNames) {
-    if (!diseaseNames) {
-      //TODO Query and return list of diseases
-    } else {
-      return this.constrain({ property:"diseaseStudy", variable:"ds" }, diseaseNames);
-    }
-  };
+  Query.prototype.diseases = makeFilter(Properties.diseaseStudy);
 
-  Query.prototype.platforms = function platforms (platformNames) {
-    if (!platformNames) {
-      //TODO Query and return list of platforms
-    } else {
-      return this.constrain({ property:"platform", variable:"p" }, platformNames);
-    }
-  };
+  Query.prototype.platforms = makeFilter(Properties.platform);
 
-  Query.prototype.centerTypes = function centerTypes (centerTypeNames) {
-    if (!centerTypeNames) {
-      //TODO Query and return list of centerTypes
-    } else {
-      return this.constrain({ property:"centerType", variable:"ct" }, centerTypeNames);
-    }
-  };
+  Query.prototype.centerTypes = makeFilter(Properties.centerType);
 
-  Query.prototype.centers = function  centers (centerNames) {
-    if (!centerNames) {
-      //TODO Query and return list of centers
-    } else {
-      return this.constrain({ property:"center", variable:"c" }, centerNames);
-    }
-  };
+  Query.prototype.centers = makeFilter(Properties.centerDomain);
 
-  Query.prototype.dataTypes = function dataTypes (dataTypeNames) {
-    if (!dataTypeNames) {
-      //TODO Query and return list of dataTypes
-    } else {
-      return this.constrain({ property:"dataType", variable:"dt" }, dataTypeNames);
-    }
-  };
+  Query.prototype.dataTypes = makeFilter(Properties.dataType);
 
-  Query.prototype.archives = function archives (archiveNames) {
-    if (!archiveNames) {
-      //TODO Query and return list of archives
-    } else {
-      return this.constrain({ property:"archive", variable:"a" }, archiveNames);
-    }
+  Query.prototype.archives = makeFilter(Properties.archive);
 
   Query.prototype.limit = function  limit (newLimit) {
     if (!newLimit) return parseInt(this.BACKMATTER.slice(9),10);
