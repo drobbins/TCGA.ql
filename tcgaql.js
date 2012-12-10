@@ -20,12 +20,11 @@
     return this;
   };
 
-  Query.prototype.FRONTMATTER = [ "PREFIX tcga: <http://purl.org/tcga/core#> "
-                                , ""
-                                , "select ?file ?url where { "
-                                ].join("\n");
+  Query.prototype.FRONTMATTER = "PREFIX tcga: <http://purl.org/tcga/core#> \n";
 
   Query.prototype.BACKMATTER = "\n} limit 100";
+
+  Query.prototype.SELECTCLAUSE = "";
 
   Query.prototype.constrain = function constrain (opts, values) {
 
@@ -116,6 +115,8 @@
 
   Query.prototype.queryString = function queryString () {
     var query = this.FRONTMATTER;
+    this.SELECTCLAUSE = this.SELECTCLAUSE || "select ?file ?url where {";
+    query += this.SELECTCLAUSE;
     this.queryParts.forEach( function (queryPart) {
       query += "\n{\n" + queryPart.string + "\n}";
     });
