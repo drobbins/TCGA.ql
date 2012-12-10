@@ -40,7 +40,7 @@
     var queryPart, graphPatterns = [], groupOrUnionGraphPattern;
 
     values.forEach(function (value) {
-      graphPatterns.push(" {\n   ?f tcga:"+property+" ?"+variable+" .\n   ?"+variable+" rdfs:label \"" + value + "\" .\n }");
+      graphPatterns.push(" {\n   ?" + variable + " rdfs:label \"" + value + "\" .\n }");
     });
 
     if (graphPatterns.length > 1) {
@@ -48,6 +48,8 @@
     } else {
       groupOrUnionGraphPattern = graphPatterns[0];
     }
+
+    groupOrUnionGraphPattern = " ?f tcga:"+property+" ?"+variable+" .\n"+groupOrUnionGraphPattern;
 
     queryPart = this.queryPartHandles[property] || {};
     if (!queryPart.string) {
