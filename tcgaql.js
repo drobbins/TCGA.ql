@@ -115,7 +115,7 @@
   Query.prototype.list = function list (property) {
     var deferred, result = [], listQueryPart;
     deferred = $.Deferred();
-    result.__proto__ = deferred.promise(); // The returned object has a promise as it's prototype.
+    // result.__proto__ = deferred.promise(); // The returned object has a promise as it's prototype.
 
     this.selectQueryIntro = "select distinct ?val where {";
     this.queryParts.list = "   ?f tcga:"+property.property+" ?"+property.variable+" .\n   ?"+property.variable+" rdfs:label ?val .\n";
@@ -124,7 +124,7 @@
       if (err) deferred.reject(resp);
       else {
         resp.results.bindings.forEach(function (binding) {
-          Array.prototype.push.call(result, binding.val.value);
+          result.push(result, binding.val.value);
         });
         deferred.resolve(result);
       }
