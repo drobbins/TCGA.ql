@@ -29,15 +29,9 @@
     this.solutionModifier = "\n} limit 100";
     this.selectQueryIntro = "select ?file ?url where {";
 
-    this.queryParts = [];
-    this.queryPartHandles = {};
+    this.queryParts = {};
 
-    var queryIntro = {
-      string : " ?f a tcga:File .\n ?f rdfs:label ?file .\n ?f tcga:url ?url ."
-    };
-
-    this.queryParts.push(queryIntro);
-    this.queryPartHandles.intro = queryIntro;
+    this.queryParts.fileGraphPatterns = " ?f a tcga:File .\n ?f rdfs:label ?file .\n ?f tcga:url ?url .";
 
     return this;
   };
@@ -66,13 +60,7 @@
     }
 
     groupOrUnionGraphPattern = " ?f tcga:"+property+" ?"+variable+" .\n"+groupOrUnionGraphPattern;
-
-    queryPart = this.queryPartHandles[property] || {};
-    if (!queryPart.string) {
-      this.queryParts.push(queryPart);
-      this.queryPartHandles[property] = queryPart;
-    }
-    queryPart.string = groupOrUnionGraphPattern;
+    this.queryParts[property] = groupOrUnionGraphPattern;
 
     return this;
   };
@@ -96,11 +84,16 @@
   };
 
   Query.prototype.queryString = function queryString () {
-    var query = this.prologue;
+    var query = "", queryParts;
+
+    query += this.prologue;
     query += this.selectQueryIntro;
-    this.queryParts.forEach( function (queryPart) {
-      query += "\n{\n" + queryPart.string + "\n}";
+
+    queryParts = this.queryParts; // capture query parts for closure
+    Object.keys(queryParts).forEach( function (queryPartId) {
+      query += "\n{\n" + queryParts[queryPartId] + "\n}";
     });
+
     query += this.solutionModifier;
     return query;
   };
@@ -125,11 +118,7 @@
     result.__proto__ = deferred.promise(); // The returned object has a promise as it's prototype.
 
     this.selectQueryIntro = "select distinct ?val where {";
-    listQueryPart = {
-      string : "   ?f tcga:"+property.property+" ?"+property.variable+" .\n   ?"+property.variable+" rdfs:label ?val .\n"
-    };
-    this.queryParts.push(listQueryPart);
-    this.queryPartHandles.list = listQueryPart;
+    this.queryParts.list = "   ?f tcga:"+property.property+" ?"+property.variable+" .\n   ?"+property.variable+" rdfs:label ?val .\n";
 
     TCGA.find(this.queryString(), function (err, resp) {
       if (err) deferred.reject(resp);
