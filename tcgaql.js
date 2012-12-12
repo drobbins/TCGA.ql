@@ -124,7 +124,7 @@
       if (err) deferred.reject(resp);
       else {
         resp.results.bindings.forEach(function (binding) {
-          result.push(result, binding.val.value);
+          result.push(binding.val.value);
         });
         deferred.resolve(result);
       }
