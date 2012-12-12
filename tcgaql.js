@@ -27,7 +27,7 @@
   Query = function () {
     this.prologue = "PREFIX tcga: <http://purl.org/tcga/core#> \n";
     this.solutionModifier = "\n} limit 100";
-    this.selectQueryIntro = "";
+    this.selectQueryIntro = "select ?file ?url where {";
 
     this.queryParts = [];
     this.queryPartHandles = {};
@@ -97,7 +97,6 @@
 
   Query.prototype.queryString = function queryString () {
     var query = this.prologue;
-    this.selectQueryIntro = this.selectQueryIntro || "select ?file ?url where {";
     query += this.selectQueryIntro;
     this.queryParts.forEach( function (queryPart) {
       query += "\n{\n" + queryPart.string + "\n}";
