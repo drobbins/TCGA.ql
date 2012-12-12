@@ -77,8 +77,11 @@
     return this;
   };
 
+  Query.prototype.filterNames = [];
+
   Object.keys(Filters).forEach( function (constraint) {
     Query.prototype[constraint] = makeFilter(Filters[constraint]);
+    Query.prototype.filterNames.push(constraint);
   });
 
   Query.prototype.limit = function  limit (newLimit) {
