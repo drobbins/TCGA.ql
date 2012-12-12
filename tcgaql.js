@@ -3,7 +3,7 @@
   /*jshint globalstrict:true browser:true devel:true jquery:true laxcomma:true proto:true*/
   /*globals TCGA:true*/
 
-  var ql, makeFilter, Query, Properties;
+  var ql, makeFilter, Query, Filters;
 
   makeFilter = function makeFilter (property) {
     return function (values) {
@@ -15,16 +15,19 @@
     };
   };
 
-  Properties = {
-    diseaseStudy : { property:"diseaseStudy", variable:"ds" },
-    centerType : { property:"centerType", variable:"ct" },
-    centerDomain : { property:"centerDomain", variable:"c"},
-    platform : { property:"platform", variable:"p"},
-    dataType : { property:"dataType", variable:"dt"},
-    archive : { property:"archive", variable:"a"}
+  Filters = {
+    diseases : { property:"diseaseStudy", variable:"ds" },
+    centerTypes : { property:"centerType", variable:"ct" },
+    centers : { property:"centerDomain", variable:"c"},
+    platforms : { property:"platform", variable:"p"},
+    dataTypes : { property:"dataType", variable:"dt"},
+    archives : { property:"archive", variable:"a"}
   };
 
   Query = function () {
+    this.prologue = "PREFIX tcga: <http://purl.org/tcga/core#> \n";
+    this.solutionModifier = "\n} limit 100";
+    this.selectQueryIntro = "";
 
     this.queryParts = [];
     this.queryPartHandles = {};
@@ -38,12 +41,6 @@
 
     return this;
   };
-
-  Query.prototype.FRONTMATTER = "PREFIX tcga: <http://purl.org/tcga/core#> \n";
-
-  Query.prototype.BACKMATTER = "\n} limit 100";
-
-  Query.prototype.SELECTCLAUSE = "";
 
   Query.prototype.constrain = function constrain (opts, values) {
 
@@ -80,21 +77,13 @@
     return this;
   };
 
-  Query.prototype.diseases = makeFilter(Properties.diseaseStudy);
-
-  Query.prototype.platforms = makeFilter(Properties.platform);
-
-  Query.prototype.centerTypes = makeFilter(Properties.centerType);
-
-  Query.prototype.centers = makeFilter(Properties.centerDomain);
-
-  Query.prototype.dataTypes = makeFilter(Properties.dataType);
-
-  Query.prototype.archives = makeFilter(Properties.archive);
+  Object.keys(Filters).forEach( function (constraint) {
+    Query.prototype[constraint] = makeFilter(Filters[constraint]);
+  });
 
   Query.prototype.limit = function  limit (newLimit) {
-    if (!newLimit) return parseInt(this.BACKMATTER.slice(9),10);
-    this.BACKMATTER = "\n} limit " + newLimit;
+    if (!newLimit) return parseInt(this.solutionModifier.slice(9),10);
+    this.solutionModifier = "\n} limit " + newLimit;
     return this;
   };
 
@@ -104,13 +93,13 @@
   };
 
   Query.prototype.queryString = function queryString () {
-    var query = this.FRONTMATTER;
-    this.SELECTCLAUSE = this.SELECTCLAUSE || "select ?file ?url where {";
-    query += this.SELECTCLAUSE;
+    var query = this.prologue;
+    this.selectQueryIntro = this.selectQueryIntro || "select ?file ?url where {";
+    query += this.selectQueryIntro;
     this.queryParts.forEach( function (queryPart) {
       query += "\n{\n" + queryPart.string + "\n}";
     });
-    query += this.BACKMATTER;
+    query += this.solutionModifier;
     return query;
   };
 
@@ -133,7 +122,7 @@
     deferred = $.Deferred();
     result.__proto__ = deferred.promise(); // The returned object has a promise as it's prototype.
 
-    this.SELECTCLAUSE = "select distinct ?val where {";
+    this.selectQueryIntro = "select distinct ?val where {";
     listQueryPart = {
       string : "   ?f tcga:"+property.property+" ?"+property.variable+" .\n   ?"+property.variable+" rdfs:label ?val .\n"
     };
@@ -156,9 +145,7 @@
     return new Query();
   };
 
-  ql.Query = Query;
-
-  TCGA.qlObj = ql;
+  TCGA.Query = Query;
 
   TCGA.__defineGetter__("ql", ql);
 
