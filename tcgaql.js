@@ -8,6 +8,7 @@
   makeFilter = function makeFilter (property) {
     return function (values) {
       if (!values) {
+        this.constrain(property);
         return this.list(property);
       } else {
         return this.constrain(property, values);
@@ -42,6 +43,11 @@
 
     property = opts.property;
     variable = opts.variable;
+
+    if (!values || values.length === 0) {
+      this.queryParts[property] = null;
+      return this;
+    }
 
     if (typeof values === "string") {
       values = [values];
