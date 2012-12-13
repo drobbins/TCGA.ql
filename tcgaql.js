@@ -115,14 +115,20 @@
   };
 
   Query.prototype.list = function list (property) {
-    var deferred, result = [], listQueryPart;
+    var deferred, result = {}, listQueryPart, that, defaultSelectQueryIntro;
     deferred = $.Deferred();
-    // result.__proto__ = deferred.promise(); // The returned object has a promise as it's prototype.
+    
+    result.__proto__ = deferred.promise(); // The returned object has a promise as it's prototype.
+    result.__proto__.push = Array.prototype.push;
 
+    defaultSelectQueryIntro = this.selectQueryIntro;
+    that = this;
     this.selectQueryIntro = "select distinct ?val where {";
     this.queryParts.list = "   ?f tcga:"+property.property+" ?"+property.variable+" .\n   ?"+property.variable+" rdfs:label ?val .\n";
 
     TCGA.find(this.queryString(), function (err, resp) {
+      that.selectQueryIntro = defaultSelectQueryIntro;
+      that.queryParts.list = null;
       if (err) deferred.reject(resp);
       else {
         resp.results.bindings.forEach(function (binding) {
