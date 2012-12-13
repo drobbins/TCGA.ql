@@ -91,7 +91,9 @@
 
     queryParts = this.queryParts; // capture query parts for closure
     Object.keys(queryParts).forEach( function (queryPartId) {
-      query += "\n{\n" + queryParts[queryPartId] + "\n}";
+      if (queryParts[queryPartId]) {
+        query += "\n{\n" + queryParts[queryPartId] + "\n}";
+      }
     });
 
     query += this.solutionModifier;
