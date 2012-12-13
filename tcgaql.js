@@ -107,9 +107,10 @@
   };
 
   Query.prototype.run = function run () {
-    var deferred, result = {};
+    var deferred, result;
     deferred = $.Deferred();
-    result.__proto__ = deferred.promise(); // The returned object has a promise as it's prototype.
+    result = Object.create(deferred.promise()); // The returned object has a promise as it's prototype.
+
     TCGA.find(this.queryString(), function (err, resp) {
       if (err) deferred.reject(resp);
       else {
@@ -117,15 +118,14 @@
         deferred.resolve(resp);
       }
     });
+
     return result;
   };
 
   Query.prototype.list = function list (property) {
-    var deferred, result = {}, listQueryPart, that, defaultSelectQueryIntro;
+    var deferred, result, listQueryPart, that, defaultSelectQueryIntro;
     deferred = $.Deferred();
-    
-    result.__proto__ = deferred.promise(); // The returned object has a promise as it's prototype.
-    result.__proto__.push = Array.prototype.push;
+    result = Object.create(deferred.promise()); // The returned object has a promise as it's prototype.
 
     defaultSelectQueryIntro = this.selectQueryIntro;
     that = this;
@@ -138,11 +138,12 @@
       if (err) deferred.reject(resp);
       else {
         resp.results.bindings.forEach(function (binding) {
-          result.push(binding.val.value);
+          Array.prototype.push.call(result, binding.val.value);
         });
         deferred.resolve(result);
       }
     });
+    
     return result;
   };
 
